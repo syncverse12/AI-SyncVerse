@@ -8,63 +8,88 @@ def clean_text(text, max_chars=2000):
 
 
 def build_corpus(
-    gitbugs_path="../data/raw/gitbugs",
-    tickets_path = "../data/raw/helpdesk-github-tickets/a_github_issues_overview_dataset.csv"
+    gitbugs_path="data/raw/gitbugs",
+    tickets_path = "data/raw/helpdesk-github-tickets/a_github_issues_overview_dataset.csv"
 ):
     all_documents = []
     doc_id = 0
 
+    #=========================
     # Process GitBugs Datasets
-    for project in os.listdir(gitbugs_path):
-        project_path = os.path.join(gitbugs_path, project)
+    #=========================
+    for file in os.listdir(gitbugs_path):
+        file_path = os.path.join(gitbugs_path, file)
+        df = pd.read_csv(file_path)
 
-        if os.path.isdir(project_path):
-            for file in os.listdir(project_path):
-                if file.endswith("_bugs.csv"):
-                    file_path = os.path.join(project_path, file)
-                    df = pd.read_csv(file_path)
+        # safety check for required columns
+        if "Summary" not in df.columns or "Description" not in df.columns:
+            continue
 
-                    for _, row in df.iterrows():
-                        if pd.isna(row["Summary"]) or pd.isna(row["Description"]):
-                            continue
+        # remove bad rows
+        df = df.dropna(subset=["Summary", "Description"])
+        df = df[
+            (df["Summary"].str.strip() != "") &
+            (df["Description"].str.strip() != "")
+        ]
 
-                        description = clean_text(row["Description"])
+        # iterate through rows and create documents
+        for row in df.itertuples(index=False):
+            description = clean_text(row.Description)
 
-                        content = f"""
-Description: {description}
-"""
+            content = f"Description: {description}"
 
-                        all_documents.append({
-                            "doc_id": doc_id,
-                            "title": row["Summary"],
-                            "content": content.strip(),
-                            "source": "gitbugs"
-                        })
-                        doc_id += 1
+            all_documents.append({
+                "doc_id": doc_id,
+                "title": row.Summary,
+                "content": content,
+                "source": "gitbugs"
+            })
 
-    # Process GitHub Tickets Datasets
+            doc_id += 1
+
+
+    #=======================
+    # Process GitHub tickets
+    #=======================
     tickets_df = pd.read_csv(tickets_path)
 
-    for _, row in tickets_df.iterrows():
-        for i in range(1, 6):
-            answer_col = f"answer_{i}"
+    # keep only needed columns
+    answer_cols = [f"answer_{i}" for i in range(1, 6)]
+    needed_cols = ["title", "body"] + answer_cols
+    tickets_df = tickets_df[needed_cols]
 
-            if pd.notna(row[answer_col]):
-                problem = clean_text(row["body"])
-                answer = clean_text(row[answer_col])
+    # drop rows where body and title are missing or empty
+    tickets_df = tickets_df.dropna(subset=["body", "title"])
+    tickets_df = tickets_df[
+        (tickets_df["body"].str.strip() != "") &
+        (tickets_df["title"].str.strip() != "")
+    ]
 
-                content = f"""
-Problem: {problem}
+    # flatten answers
+    tickets_df = tickets_df.melt(
+        id_vars=["title", "body"], 
+        value_vars=answer_cols, 
+        value_name="answer")
+    
+    # remove empty answers
+    tickets_df = tickets_df.dropna(subset=["answer"])
+    tickets_df = tickets_df[tickets_df["answer"].str.strip() != ""]
 
-Answer: {answer}
-"""
+    # iterate through rows and create documents
+    for row in tickets_df.itertuples(index=False):
+        problem = clean_text(row.body)
+        answer = clean_text(row.answer)
 
-                all_documents.append({
-                    "doc_id": doc_id,
-                    "title": row["title"],
-                    "content": content.strip(),
-                    "source": "github_tickets"
-                })
-                doc_id += 1
+        content = f"""Problem: {problem}
+
+Answer: {answer}"""
+        
+        all_documents.append({
+            "doc_id": doc_id,
+            "title": row.title,
+            "content": content.strip(),
+            "source": "github_tickets"
+        })
+        doc_id += 1
 
     return all_documents
