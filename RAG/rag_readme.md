@@ -1,10 +1,8 @@
-# RAG Feature - Graduation Project
+# RAG Feature
 
-This module implements the **RAG (Retrieval-Augmented Generation) feature** for the management system.
+This module implements a full **Retrieval-Augmented Generation (RAG) pipeline** with **real-time updates**.
 
-It processes issue/bug datasets, converts them into searchable chunks, generates embeddings, stores them in a FAISS vector database, and provides semantic retrieval.
-
-link to the data(..)
+It processes bug/issue datasets, converts them into semantic chunks, generates embeddings using Sentence Transformers (GPU supported), stores them in a FAISS vector database, and enables fast semantic retrieval.
 
 ---
 
@@ -22,147 +20,195 @@ RAG feature/
 │   │       └── a_github_issues_overview_dataset.csv
 │   │
 │   └── processed/
-│       ├── rag_faiss_index.bin
-│       ├── rag_texts.pkl
-│       └── rag_chunks.pkl
+│       ├── rag_faiss_index.bin   # vector database
+│       ├── rag_texts.pkl         # chunk texts
+│       └── rag_chunks.pkl        # metadata
 │
 ├── src/
 │   ├── preprocess.py
 │   ├── chunking.py
 │   ├── embedding_store.py
 │   ├── retrieval.py
-│   └── main.py
+│   ├── realtime_update.py
+│   ├── realtime_test.py
+│   ├── retrieval_realtime.py
+│   ├── main.py
+│   └── __pycache__/
 │
-└── requirements.txt
-```
+├── requirements.txt
+├── README.md
 
----
+   ```
 
-## Data Flow
+   ---
 
-```text
-Raw CSV files
-   ↓
-preprocess.py
-   ↓
-chunking.py
-   ↓
-embedding_store.py
-   ↓
-FAISS + Pickle files
-   ↓
-retrieval.py
-```
+   ## Data Flow
 
----
+   ```text
+      Raw CSV files
+         ↓
+      preprocess.py
+         ↓
+      nking.py
+         ↓
+      edding_store.py
+         ↓
+      SS + Pickle files
+         ↓
+      rieval.py
+         ↓
+real-time updates (optional)
+   ```
 
-## File Responsibilities
+   ---
 
-### `preprocess.py`
+   ## File Responsibilities
 
-Builds the unified corpus from both datasets.
+   ### `preprocess.py`
 
-**Input:**
+   Builds the unified corpus from both datasets.
 
-* `data/raw/gitbugs/*.csv`
-* `data/raw/helpdesk-github-tickets/*.csv`
+   **Input:**
 
-**Output format:**
+   * `data/raw/gitbugs/*.csv`
+   * `data/raw/helpdesk-github-tickets/*.csv`
 
-```python
-{
-    "doc_id": int,
-    "title": str,
-    "content": str,
-    "source": str
-}
-```
+   **Output format:**
 
----
+   ```python
+   {
+      "doc_id": int,
+      "title": str,
+      "content": str,
+      "source": str
+   }
+   ```
 
-### `chunking.py`
+   ---
 
-Splits each document into smaller semantic chunks using `RecursiveCharacterTextSplitter`.
+   ### `chunking.py`
 
-**Output format:**
+   Splits each document into smaller semantic chunks using `RecursiveCharacterTextSplitter`.
 
-```python
-{
-    "doc_id": int,
-    "text": str,
-    "source": str
-}
-```
+   **Output format:**
 
----
+   ```python
+   {
+      "doc_id": int,
+      "text": str,
+      "source": str
+   }
+   ```
 
-### `embedding_store.py`
+   ---
 
-Responsible for:
+   ### `embedding_store.py`
 
-* removing noisy log-like chunks
-* generating embeddings
-* building FAISS vector DB
-* saving processed files
+   Handles:
 
-**Saved files:**
+   * noise filtering (logs, stack traces, etc.)
+   * embedding generation (SentenceTransformer)
+   * FAISS index creation
+   * saving processed files
 
-* `rag_faiss_index.bin` → vector database
-* `rag_texts.pkl` → searchable texts
-* `rag_chunks.pkl` → metadata / chunk mapping
+   **Output:**
 
----
+   * `rag_faiss_index.bin` → vector database
+   * `rag_texts.pkl` → searchable texts
+   * `rag_chunks.pkl` → metadata / chunk mapping
 
-### `retrieval.py`
+   ---
 
-Loads saved FAISS index and performs semantic search.
+   ### `retrieval.py`
 
-**Usage:**
+   Loads saved FAISS index and performs semantic search.
 
-```python
-from retrieval import RAGRetriever
+   **Usage:**
 
-retriever = RAGRetriever("../data/processed")
-results = retriever.search("browser crash issue")
-```
+   ```python
+   from retrieval import RAGRetriever
 
----
+   retriever = RAGRetriever("data/processed")
+   results = retriever.search("browser crash issue")
+   ```
 
-### `main.py`
+   ---
+   ### `realtime_update.py`
 
-Runs the full pipeline from preprocessing to saving the vector database.
+   Adds new documents to the system without rebuilding the pipeline.
 
-**Run:**
+   **Features:**
 
-```bash
-python src/main.py
-```
+   * chunk new data
+   * embed only new content
+   * update FAISS index
+   * persist changes
 
----
+   ---
+   ### `realtime_test.py`
 
-## Current Status
+   Simulates adding a new document.
 
-Completed:
+   ```python
+   python src/realtime_test.py
+   ```
 
-* data preprocessing
-* chunking
-* embeddings
-* FAISS indexing
-* retrieval
+   ---
+   ### `retrieval_realtime.py`
 
----
+   Tests retrieval after real-time updates.
 
-## Next Steps
+   ```python
+   python src/retrieval_realtime.py
+   ```
 
-1. integrate `retrieval.py` with backend API
-2. connect retrieved context to LLM response generation
-3. expose endpoint for chatbot / search feature
-4. optional: add reranking / better filtering
+   ### `main.py`
 
----
+   Runs full pipeline:
 
-## Notes
+   **Run:**
 
-* processed files are already generated in `data/processed`
-* no need to rerun `main.py` unless raw data changes
-* use `retrieval.py` directly for backend integration
+   ```bash
+   python src/main.py
+   ```
+
+   **Only run if:**
+
+   * raw data changed
+   * rebuilding index is needed
+
+   ---
+
+   ## How to run 
+
+   ### 1. Install dependencies
+
+   ```bash
+   > pip install -r requirements.txt
+   ```
+
+   ### 2. Build RAG pipeline
+
+   ```bash
+   > python src/main.py
+   ```
+   
+   ### 3. Test retrieval
+
+   ```bash
+   > python src/retrieval_realtime.py
+   ```
+   
+   ### 4. Test real-time update
+
+   ```bash
+   > python src/realtime_test.py
+   ```
+
+   Then run retrieval again.
+
+   ---
+
+   ## Notes
+
+   * paths are relative to project root (important for running scripts)
