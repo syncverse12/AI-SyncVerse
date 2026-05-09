@@ -23,7 +23,7 @@ def calculate_client_alignment(tasks, requirements):
     details = []
 
     
-    TOP_K = 5                # retrieval depth
+    TOP_K = min(5, len(tasks))                # retrieval depth
     RERANK_WEIGHT = 0.7      # reranking weight
     RETRIEVAL_WEIGHT = 0.3   # embedding retrieval weight
 
@@ -51,6 +51,8 @@ def calculate_client_alignment(tasks, requirements):
 
         # semantic reranking
         rerank_scores = cross_encoder.predict(candidate_pairs)
+
+        rerank_scores = np.array(rerank_scores).flatten()
 
         # best reranked task
         best_local_idx = np.argmax(rerank_scores)
@@ -99,7 +101,7 @@ def calculate_client_alignment(tasks, requirements):
             "final_similarity": round(final_similarity, 4),
             "priority": priority,
             "weighted_contribution": round(weighted_contribution, 4),
-            "matched": final_similarity >= 0.6
+            "matched": bool(final_similarity >= 0.6)
         })
 
     # final alignment percentage
