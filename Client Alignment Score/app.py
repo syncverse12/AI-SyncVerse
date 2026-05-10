@@ -3,13 +3,14 @@ from pydantic import BaseModel
 from typing import List
 
 from alignment import calculate_client_alignment
+from agent import process_requirements
+
 
 app = FastAPI()
 
 
 class Requirement(BaseModel):
     text: str
-    priority: int
 
 
 class Task(BaseModel):
@@ -24,9 +25,28 @@ class AlignmentRequest(BaseModel):
 @app.post("/alignment-score")
 def alignment_score(data: AlignmentRequest):
 
-    requirements = [{"text": r.text, "priority": r.priority} for r in data.requirements]
-    tasks = [{"text": t.text} for t in data.tasks]
+    raw_requirements = [
+        {"text": r.text}
+        for r in data.requirements
+    ]
 
-    result = calculate_client_alignment(tasks, requirements)
+    tasks = [
+        {"text": t.text}
+        for t in data.tasks
+    ]
+
+    # AI preprocessing
+    processed_requirements = process_requirements(raw_requirements)
+
+    # alignment engine
+    result = calculate_client_alignment(
+        tasks,
+        processed_requirements
+    )
+
+    # include AI-generated requirements
+    result["processed_requirements"] = (
+        processed_requirements
+    )
 
     return result
