@@ -3,3 +3,9 @@ numpy
 faiss-cpu
 sentence-transformers
 langchain-text-splitters
+torch
+scikit-learn
+langchain-community
+groq
+python-dotenv
+tqdm
