@@ -4,12 +4,14 @@ import faiss
 import pickle
 import numpy as np
 from chunking import create_chunks
+import torch
 
 
 class RAGUpdater:
     def __init__(self, data_dir="data/processed"):
         self.data_dir = data_dir
-        self.model = SentenceTransformer("all-MiniLM-L6-v2", device="cuda")    # load model
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.model = SentenceTransformer("all-MiniLM-L6-v2", device=device)    # load model
         self.index = faiss.read_index(f"{data_dir}/rag_faiss_index.bin")       # load existing index
 
         # load stored texts

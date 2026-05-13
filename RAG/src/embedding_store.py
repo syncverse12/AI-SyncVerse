@@ -2,6 +2,7 @@ from sentence_transformers import SentenceTransformer
 import faiss
 import numpy as np
 import pickle
+import torch
 
 
 def is_noisy_document(text):
@@ -30,8 +31,9 @@ def build_and_save_index(chunks, save_dir="data/processed"):
         if not is_noisy_document(text)
     ]
 
-    model = SentenceTransformer("all-MiniLM-L6-v2", device="cuda")
-
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    model = SentenceTransformer("all-MiniLM-L6-v2", device=device)
+    
     embeddings = model.encode(
         clean_texts,
         show_progress_bar=True,
