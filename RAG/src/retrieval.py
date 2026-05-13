@@ -1,11 +1,13 @@
 import faiss
 import pickle
 from sentence_transformers import SentenceTransformer
+import torch
 
 
 class RAGRetriever:
     def __init__(self, data_dir="data/processed"):
-        self.model = SentenceTransformer("all-MiniLM-L6-v2")
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.model = SentenceTransformer("all-MiniLM-L6-v2", device=device)
         self.index = faiss.read_index(f"{data_dir}/rag_faiss_index.bin")
 
         with open(f"{data_dir}/rag_texts.pkl", "rb") as f:
