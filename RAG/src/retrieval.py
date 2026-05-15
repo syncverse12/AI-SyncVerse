@@ -13,8 +13,19 @@ class RAGRetriever:
         with open(f"{data_dir}/rag_texts.pkl", "rb") as f:
             self.texts = pickle.load(f)
 
+        # load chunk metadata so source/doc_id are available at search time
+        with open(f"{data_dir}/rag_chunks.pkl", "rb") as f:
+            self.chunks = pickle.load(f)
+
     def search(self, query, k=3):
         query_vector = self.model.encode([query]).astype("float32")
         distances, indices = self.index.search(query_vector, k=k)
 
-        return [self.texts[i] for i in indices[0]]
+        results = []
+        for idx, dist in zip(indices[0], distances[0]):
+            results.append({
+                "text": self.texts[idx],
+                "metadata": self.chunks[idx],   # source, doc_id, etc.
+                "distance": float(dist)
+            })
+        return results
