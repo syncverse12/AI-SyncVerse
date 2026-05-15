@@ -3,7 +3,6 @@ import faiss
 import numpy as np
 import pickle
 import torch
-import os
 
 
 def is_noisy_document(text):
@@ -14,7 +13,8 @@ def is_noisy_document(text):
         "DEBUG", "ERROR -", "stack trace", "core dump", "pid",
         ".java:", "0x", "TEST-UNEXPECTED-FAIL",
         "TEST-START", "TEST-PASS", "TEST-INFO",
-        "GECKO(", "task ", "logviewer", "intermittent"
+        "GECKO(", "logviewer", "intermittent"
+        # removed "task " — too broad, filters legitimate content
 ]
 
     text_upper = text.upper()
@@ -25,13 +25,16 @@ def build_and_save_index(chunks, save_dir="data/processed"):
     """
     embedding chunks
     """
-    os.makedirs(save_dir, exist_ok=True)
     texts = [chunk["text"] for chunk in chunks]
 
-    clean_texts = [
-        text for text in texts
+    # filter both texts AND chunks together so indices stay aligned
+    filtered = [
+        (chunk, text)
+        for chunk, text in zip(chunks, texts)
         if not is_noisy_document(text)
     ]
+    clean_chunks = [item[0] for item in filtered]
+    clean_texts  = [item[1] for item in filtered]
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model = SentenceTransformer("all-MiniLM-L6-v2", device=device)
@@ -44,8 +47,6 @@ def build_and_save_index(chunks, save_dir="data/processed"):
     print("Embedding successful")
 
     embedding_matrix = np.array(embeddings).astype("float32")
-    np.save(f"{save_dir}/embeddings_backup.npy", embedding_matrix)  # ← fix 2: checkpoint 
-    print("Embedding checkpoint saved")
 
     #FAISS index for similarity search
     index = faiss.IndexFlatL2(embedding_matrix.shape[1])
@@ -58,6 +59,6 @@ def build_and_save_index(chunks, save_dir="data/processed"):
     with open(f"{save_dir}/rag_texts.pkl", "wb") as f:            # actual text chunks
         pickle.dump(clean_texts, f)
 
-    with open(f"{save_dir}/rag_chunks.pkl", "wb") as f:           # all chunks with metadata
-        pickle.dump(chunks, f)
+    with open(f"{save_dir}/rag_chunks.pkl", "wb") as f:           # metadata aligned with clean_texts
+        pickle.dump(clean_chunks, f)
     print("saving successful")

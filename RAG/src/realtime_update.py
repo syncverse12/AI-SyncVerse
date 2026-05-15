@@ -28,8 +28,10 @@ class RAGUpdater:
     # add new documents
     #===================
     def add_document(self, title, content, source="live"):
+        # use max existing doc_id + 1 to avoid collisions on reload
+        next_id = max((c["doc_id"] for c in self.chunks), default=-1) + 1
         new_doc = {
-            "doc_id": len(self.chunks),
+            "doc_id": next_id,
             "title": title,
             "content": content,
             "source": source
@@ -40,13 +42,17 @@ class RAGUpdater:
             chunk["text"]
             for chunk in new_chunks
             if not is_noisy_document(chunk["text"])  # filter out noisy chunks
-        ]                                                               # extract text from chunks
+        ]
+        clean_new_chunks = [
+            chunk for chunk in new_chunks
+            if not is_noisy_document(chunk["text"])  # keep chunks aligned with new_text
+        ]
         new_embeddings = self.model.encode(new_text).astype("float32")  # embed the new chunks
-        self.index.add(new_embeddings)                                  # add embeddings to FAISS index
-        self.texts.extend(new_text)                                     # add new texts to list
-        self.chunks.extend(new_chunks)                                  # add new chunks to list
+        self.index.add(new_embeddings)                                   # add embeddings to FAISS index
+        self.texts.extend(new_text)                                      # add new texts to list
+        self.chunks.extend(clean_new_chunks)                             # add aligned chunks to list
 
-        print(f"added {len(new_chunks)} new chunks")
+        print(f"added {len(new_text)} new chunks ({len(new_chunks) - len(new_text)} filtered as noisy)")
         
     #==============
     # save updates
