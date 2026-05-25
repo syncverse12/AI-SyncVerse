@@ -1,0 +1,137 @@
+{
+  "examples": {
+    "analyze_task_backend": {
+      "endpoint": "POST /analyze-task",
+      "payload": {
+        "description": "Build a scalable FastAPI microservice with Redis caching and PostgreSQL integration. The service must handle real-time WebSocket connections and be deployed via Docker on Kubernetes. This is a senior-level task.",
+        "requester": "Product Team",
+        "priority": "High"
+      }
+    },
+    "analyze_task_ai": {
+      "endpoint": "POST /analyze-task",
+      "payload": {
+        "description": "Train a PyTorch LangChain model for document understanding using OpenCV for preprocessing. Deploy via MLflow. Critical production workload.",
+        "requester": "Data Science Lead",
+        "priority": "Critical"
+      }
+    },
+    "analyze_task_frontend": {
+      "endpoint": "POST /analyze-task",
+      "payload": {
+        "description": "Build a React + TypeScript dashboard with TailwindCSS for real-time data visualization using GraphQL. Mid-level complexity.",
+        "requester": "Design Team",
+        "priority": "Normal"
+      }
+    },
+    "add_employee": {
+      "endpoint": "POST /add-employee",
+      "payload": {
+        "name": "Mariam",
+        "track": "DevOps",
+        "skills": ["Kubernetes", "Terraform", "AWS", "CI/CD"],
+        "level": "Senior",
+        "active_tasks": 0,
+        "availability_score": 100,
+        "past_success_rate": 0.91
+      }
+    },
+    "update_employee_status": {
+      "endpoint": "POST /update-employee-status",
+      "payload": {
+        "employee_id": 1,
+        "active_tasks": 5,
+        "availability_score": 30
+      }
+    }
+  },
+  "websocket": {
+    "task_updates": "WS /ws/task-updates/{task_id}",
+    "global": "WS /ws/global",
+    "description": "Connect BEFORE or immediately AFTER calling POST /analyze-task to receive live agent events."
+  },
+  "sample_ws_events": [
+    {
+      "event": "task_received",
+      "task_id": "a1b2c3d4",
+      "ts": 1716500000.0,
+      "message": "Task received → starting analysis pipeline…"
+    },
+    {
+      "event": "agent_start",
+      "task_id": "a1b2c3d4",
+      "ts": 1716500000.3,
+      "message": "Task Understanding Agent running…",
+      "data": {"agent": "task_agent", "status": "running"}
+    },
+    {
+      "event": "agent_done",
+      "task_id": "a1b2c3d4",
+      "ts": 1716500000.65,
+      "message": "Task Understanding Agent complete",
+      "data": {
+        "agent": "task_agent",
+        "status": "done",
+        "requirements": {
+          "required_track": "Backend",
+          "required_skills": ["FastAPI", "Redis", "Docker", "Kubernetes", "Postgresql"],
+          "seniority_level": "Senior",
+          "complexity": "High",
+          "summary": "High-complexity Backend task requiring Senior-level expertise in: FastAPI, Redis, Docker, Kubernetes."
+        }
+      }
+    },
+    {
+      "event": "final_result",
+      "task_id": "a1b2c3d4",
+      "ts": 1716500001.8,
+      "status": "complete",
+      "final_result": {
+        "task_id": "a1b2c3d4",
+        "status": "complete",
+        "updates": [
+          "Task received → starting analysis pipeline…",
+          "Task Understanding Agent running…",
+          "Task Understanding Agent complete",
+          "Skill Matching + Workload Monitoring agents running in parallel…",
+          "Skill Matching Agent complete",
+          "Workload Monitoring Agent complete",
+          "Seniority Fit Agent running…",
+          "Seniority Fit Agent complete",
+          "Decision Orchestrator synthesising final ranking…",
+          "Decision Orchestrator complete – top candidates identified"
+        ],
+        "final_recommendations": [
+          {
+            "rank": 1,
+            "employee_id": 1,
+            "name": "Ahmed",
+            "track": "Backend",
+            "level": "Senior",
+            "final_score": 78.2,
+            "skill_score": 85.0,
+            "workload_score": 59.0,
+            "seniority_score": 100.0,
+            "performance_score": 92.0,
+            "reason": "Strong skill match (fastapi, redis, docker); manageable workload; ideal seniority level (Senior); excellent track record (92%).",
+            "matched_skills": ["fastapi", "redis", "docker"]
+          },
+          {
+            "rank": 2,
+            "employee_id": 2,
+            "name": "Sara",
+            "track": "Backend",
+            "level": "Mid",
+            "final_score": 71.4,
+            "skill_score": 70.0,
+            "workload_score": 82.0,
+            "seniority_score": 70.0,
+            "performance_score": 88.0,
+            "reason": "Moderate skill overlap; low current workload; acceptable seniority (Mid); solid track record (88%).",
+            "matched_skills": ["fastapi", "redis"]
+          }
+        ]
+      }
+    }
+  ]
+}
