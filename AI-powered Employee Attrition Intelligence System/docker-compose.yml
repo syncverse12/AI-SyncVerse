@@ -1,0 +1,145 @@
+version: "3.9"
+
+services:
+  # ──────────────────────────────────────────
+  # PostgreSQL Database
+  # ──────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: syncverse_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: syncverse_attrition
+      POSTGRES_USER: syncverse
+      POSTGRES_PASSWORD: syncverse_pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U syncverse -d syncverse_attrition"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - syncverse_net
+
+  # ──────────────────────────────────────────
+  # Redis Cache
+  # ──────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: syncverse_redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - syncverse_net
+
+  # ──────────────────────────────────────────
+  # FastAPI Application
+  # ──────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    container_name: syncverse_api
+    restart: unless-stopped
+    environment:
+      APP_ENV: production
+      DEBUG: "false"
+      DATABASE_URL: postgresql+asyncpg://syncverse:syncverse_pass@postgres:5432/syncverse_attrition
+      REDIS_URL: redis://redis:6379/0
+      MODEL_PATH: /app/ml_models
+      LOG_LEVEL: INFO
+      SECRET_KEY: ${SECRET_KEY:-change-me-in-production-32-chars-min}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:3000}
+      ENABLE_BACKGROUND_JOBS: "true"
+      PREDICTION_RECALC_INTERVAL_HOURS: "24"
+    volumes:
+      - ml_models:/app/ml_models
+      - app_logs:/app/logs
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    networks:
+      - syncverse_net
+
+  # ──────────────────────────────────────────
+  # ML Training Runner (one-shot)
+  # Run: docker-compose run --rm trainer
+  # ──────────────────────────────────────────
+  trainer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    container_name: syncverse_trainer
+    environment:
+      DATABASE_URL: postgresql+asyncpg://syncverse:syncverse_pass@postgres:5432/syncverse_attrition
+      MODEL_PATH: /app/ml_models
+    volumes:
+      - ml_models:/app/ml_models
+      - ./data:/app/data
+    command: >
+      sh -c "python scripts/generate_seed_data.py --n 3000 --output /app/data/training_data.csv &&
+             python -m app.ml.train --data /app/data/training_data.csv --model-dir /app/ml_models"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - syncverse_net
+    profiles:
+      - training
+
+  # ──────────────────────────────────────────
+  # Database Seeder (one-shot)
+  # Run: docker-compose run --rm seeder
+  # ──────────────────────────────────────────
+  seeder:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    container_name: syncverse_seeder
+    environment:
+      DATABASE_URL: postgresql+asyncpg://syncverse:syncverse_pass@postgres:5432/syncverse_attrition
+    command: python scripts/generate_seed_data.py --seed-db --n 200
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - syncverse_net
+    profiles:
+      - seeding
+
+
+volumes:
+  postgres_data:
+  redis_data:
+  ml_models:
+  app_logs:
+
+
+networks:
+  syncverse_net:
+    driver: bridge
