@@ -4,10 +4,10 @@ main.py
 FastAPI application factory for the Dynamic Workload Balancing System.
 
 Run:
-    uvicorn app.main:app --reload --port 8000
+    uvicorn app.main:app --reload --port 7860
 
 Docs:
-    http://localhost:8000/docs
+    http://localhost:7860/docs
 """
 
 from __future__ import annotations
