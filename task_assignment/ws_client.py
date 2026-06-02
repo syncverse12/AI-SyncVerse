@@ -11,8 +11,8 @@ import json
 import httpx
 import websockets
 
-BASE_URL = "http://localhost:8000"
-WS_URL   = "ws://localhost:8000"
+BASE_URL = "https://omnia0-smart-task-assignment.hf.space"
+WS_URL = "wss://omnia0-smart-task-assignment.hf.space"
 
 SAMPLE_TASK = {
     "description": (
