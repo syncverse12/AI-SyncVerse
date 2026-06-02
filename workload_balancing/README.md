@@ -1,4 +1,12 @@
-# ⚖️ Dynamic Workload Balancing System
+---
+title: Workload Balancer
+colorFrom: blue
+colorTo: green
+sdk: docker
+app_port: 7860
+---
+
+# Dynamic Workload Balancing System
 
 A production-ready FastAPI backend that continuously monitors employee workload,
 detects imbalance in task distribution, and generates actionable redistribution
