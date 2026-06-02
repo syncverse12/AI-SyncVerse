@@ -9,6 +9,13 @@
 [![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen?style=flat-square)]()
 
 ---
+## Live Demo
+
+🚀 Hugging Face Space  
+https://omnia0-smart-task-assignment.hf.space
+
+📚 API Docs  
+https://omnia0-smart-task-assignment.hf.space/docs
 
 ## Table of Contents
 
@@ -599,7 +606,7 @@ Client                     FastAPI                  Agent Pipeline             W
 **1. Clone the repository**
 
 ```bash
-git clone https://github.com/your-org/smart-task-assignment.git
+git clone https://github.com/Omnia0/smart-task-assignment.git
 cd smart-task-assignment
 ```
 
