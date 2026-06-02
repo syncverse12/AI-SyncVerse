@@ -6,7 +6,7 @@ All I/O contracts are defined here for strict validation.
 from __future__ import annotations
 from enum import Enum
 from typing import List, Optional, Dict, Any
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, model_validator
 
 
 # ---------------------------------------------------------------------------
@@ -59,7 +59,7 @@ class Task(BaseModel):
     assigned_to: int  # employee id
     is_delayed: bool = False
     estimated_hours: float = Field(default=4.0, ge=0.1)
-    tags: List[str] = []
+    tags: List[str] = Field(default_factory=list)
 
 
 class Employee(BaseModel):
@@ -78,15 +78,16 @@ class Employee(BaseModel):
         default=0.85, ge=0.0, le=1.0,
         description="Historical task completion success rate"
     )
-    skills: List[str] = []
+    skills: List[str] = Field(default_factory=list)
     role: str = "engineer"
 
-    @validator("delayed_tasks")
-    def delayed_cannot_exceed_active(cls, v, values):
-        active = values.get("active_tasks", 0)
-        if v > active:
-            raise ValueError("delayed_tasks cannot exceed active_tasks")
-        return v
+    @model_validator(mode="after")
+    def validate_delayed_tasks(self):
+        if self.delayed_tasks > self.active_tasks:
+            raise ValueError(
+                "delayed_tasks cannot exceed active_tasks"
+            )
+        return self
 
 
 # ---------------------------------------------------------------------------
@@ -127,7 +128,7 @@ class BalanceReport(BaseModel):
     bottleneck_employees: List[WorkloadMetrics]
     recommended_actions: List[RecommendedAction]
     summary: str
-    metrics: Dict[str, Any] = {}
+    metrics: Dict[str, Any] = Field(default_factory=dict)
 
 
 # ---------------------------------------------------------------------------

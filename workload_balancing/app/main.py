@@ -37,7 +37,7 @@ logger = logging.getLogger("workload_balancer")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("⚖️  Dynamic Workload Balancing System starting up…")
+    logger.info("Dynamic Workload Balancing System starting up…")
 
     svc = get_balancer_service()
 
@@ -48,12 +48,12 @@ async def lifespan(app: FastAPI):
             await svc.ping_all()
 
     hb_task = asyncio.create_task(heartbeat())
-    logger.info("✅ Heartbeat task started")
+    logger.info("Heartbeat task started")
 
     yield
 
     hb_task.cancel()
-    logger.info("🛑 Workload Balancing System shut down cleanly")
+    logger.info("Workload Balancing System shut down cleanly")
 
 
 # ---------------------------------------------------------------------------
@@ -61,7 +61,7 @@ async def lifespan(app: FastAPI):
 # ---------------------------------------------------------------------------
 
 app = FastAPI(
-    title="⚖️ Dynamic Workload Balancing System",
+    title="Dynamic Workload Balancing System",
     description=(
         "Real-time workload monitoring, imbalance detection, and redistribution "
         "recommendations for engineering teams.  All actions require human approval."
