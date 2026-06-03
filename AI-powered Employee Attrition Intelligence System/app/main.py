@@ -1,6 +1,7 @@
 """
 SyncVerse Attrition Intelligence System — FastAPI Application Entry Point.
 """
+import os
 
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, status
@@ -24,26 +25,31 @@ from app.api.v1.router import api_router, root_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Application lifespan: init resources on startup, clean up on shutdown."""
     setup_logging()
-    logger.info(f"Starting {settings.app_name} v{settings.app_version} [{settings.app_env}]")
+    logger.info("Starting SyncVerse API")
 
-    # Initialize DB
-    await init_db()
-    logger.info("Database initialized.")
+    #  DB ONLY IF NOT HF
+    if os.getenv("APP_ENV") != "hf":
+        await init_db()
+        logger.info("Database initialized")
+    else:
+        logger.warning("HF mode → skipping DB")
 
-    # Load ML models
+    #  ML MODELS ALWAYS
     model_registry.load_models()
 
-    # Start background scheduler
-    start_scheduler()
+    #  scheduler disabled on HF
+    if os.getenv("APP_ENV") != "hf":
+        start_scheduler()
 
-    yield  # ← application is running
+    yield
 
-    # Shutdown
-    stop_scheduler()
-    await close_db()
-    logger.info(f"{settings.app_name} shutdown complete.")
+    # shutdown
+    if os.getenv("APP_ENV") != "hf":
+        stop_scheduler()
+        await close_db()
+
+    logger.info("Shutdown complete")
 
 
 # ──────────────────────────────────────────────

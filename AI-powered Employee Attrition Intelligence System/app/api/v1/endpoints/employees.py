@@ -6,12 +6,13 @@ CRUD for employees and metrics — used by the SyncVerse admin/dashboard.
 from __future__ import annotations
 import uuid
 from datetime import date
-from typing import Optional, List
+from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy import select, func
+from sqlalchemy import select, func, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 from loguru import logger
+from pydantic import BaseModel
 
 from app.db.session import get_db
 from app.models.employee import Employee
@@ -20,9 +21,17 @@ from app.schemas.schemas import (
     EmployeeCreate, EmployeeResponse,
     EmployeeMetricsCreate, PaginatedResponse, ErrorResponse,
 )
-from app.core.exceptions import EmployeeNotFoundException
 
 router = APIRouter(prefix="/employees", tags=["Employee Management"])
+
+
+# ──────────────────────────────────────────────
+# Schema for deactivate endpoint
+# ──────────────────────────────────────────────
+
+class DeactivateEmployeeRequest(BaseModel):
+    left_date: Optional[date] = None
+    voluntary: Optional[bool] = None
 
 
 # ──────────────────────────────────────────────
@@ -39,8 +48,7 @@ async def create_employee(
     payload: EmployeeCreate,
     db: AsyncSession = Depends(get_db),
 ) -> EmployeeResponse:
-    """Create a new employee record."""
-    # Check for duplicate email
+
     existing = await db.execute(
         select(Employee).where(Employee.email == payload.email)
     )
@@ -54,9 +62,11 @@ async def create_employee(
         id=uuid.uuid4(),
         **payload.model_dump(),
     )
+
     db.add(employee)
     await db.flush()
     await db.refresh(employee)
+
     logger.info(f"Created employee: {employee.employee_code}")
     return employee
 
@@ -71,19 +81,23 @@ async def get_employee(
     employee_id: str,
     db: AsyncSession = Depends(get_db),
 ) -> EmployeeResponse:
-    """Fetch a single employee by UUID."""
+
     try:
         emp_uuid = uuid.UUID(employee_id)
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid employee ID format.")
 
-    result = await db.execute(select(Employee).where(Employee.id == emp_uuid))
+    result = await db.execute(
+        select(Employee).where(Employee.id == emp_uuid)
+    )
     employee = result.scalar_one_or_none()
+
     if not employee:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Employee '{employee_id}' not found.",
         )
+
     return employee
 
 
@@ -100,19 +114,19 @@ async def list_employees(
     is_active: bool = Query(default=True),
     db: AsyncSession = Depends(get_db),
 ) -> PaginatedResponse:
-    """List employees with optional filtering and pagination."""
+
     filters = [Employee.is_active == is_active]
+
     if department:
         filters.append(Employee.department == department)
     if team_id:
         filters.append(Employee.team_id == team_id)
 
-    # Count
-    count_stmt = select(func.count(Employee.id)).where(*filters)
-    total = (await db.execute(count_stmt)).scalar_one()
+    total_stmt = select(func.count(Employee.id)).where(*filters)
+    total = (await db.execute(total_stmt)).scalar_one()
 
-    # Fetch page
     offset = (page - 1) * page_size
+
     stmt = (
         select(Employee)
         .where(*filters)
@@ -120,6 +134,7 @@ async def list_employees(
         .limit(page_size)
         .order_by(Employee.created_at.desc())
     )
+
     result = await db.execute(stmt)
     employees = result.scalars().all()
 
@@ -128,37 +143,52 @@ async def list_employees(
         total=total,
         page=page,
         page_size=page_size,
-        pages=-(-total // page_size),  # ceiling division
+        pages=-(-total // page_size),
     )
 
 
+# ──────────────────────────────────────────────
+# FIXED: Deactivate Employee (CORRECT VERSION)
+# ──────────────────────────────────────────────
+
 @router.patch(
     "/{employee_id}/deactivate",
-    status_code=status.HTTP_204_NO_CONTENT,
+    status_code=status.HTTP_200_OK,
     summary="Mark employee as inactive (left company)",
 )
 async def deactivate_employee(
     employee_id: str,
-    left_date: Optional[date] = None,
-    voluntary: Optional[bool] = None,
+    payload: DeactivateEmployeeRequest,
     db: AsyncSession = Depends(get_db),
-) -> None:
-    """Mark an employee as no longer active."""
+):
+
     try:
         emp_uuid = uuid.UUID(employee_id)
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid employee ID format.")
 
-    result = await db.execute(select(Employee).where(Employee.id == emp_uuid))
+    result = await db.execute(
+        select(Employee).where(Employee.id == emp_uuid)
+    )
     employee = result.scalar_one_or_none()
+
     if not employee:
         raise HTTPException(status_code=404, detail="Employee not found.")
 
     employee.is_active = False
-    employee.left_date = left_date or date.today()
-    employee.left_voluntarily = voluntary
+    employee.left_date = payload.left_date or date.today()
+    employee.left_voluntarily = payload.voluntary
+
     await db.flush()
+
     logger.info(f"Deactivated employee {employee_id}")
+
+    return {
+        "message": "Employee deactivated successfully",
+        "employee_id": employee_id,
+        "left_date": str(employee.left_date),
+        "voluntary": employee.left_voluntarily,
+    }
 
 
 # ──────────────────────────────────────────────
@@ -175,17 +205,17 @@ async def create_metrics(
     employee_id: str,
     payload: EmployeeMetricsCreate,
     db: AsyncSession = Depends(get_db),
-) -> dict:
-    """
-    Add a new metrics snapshot for an employee.
-    The latest snapshot is used for ML predictions.
-    """
+):
+
     try:
         emp_uuid = uuid.UUID(employee_id)
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid employee ID format.")
 
-    result = await db.execute(select(Employee).where(Employee.id == emp_uuid))
+    result = await db.execute(
+        select(Employee).where(Employee.id == emp_uuid)
+    )
+
     if not result.scalar_one_or_none():
         raise HTTPException(status_code=404, detail="Employee not found.")
 
@@ -194,11 +224,17 @@ async def create_metrics(
         employee_id=emp_uuid,
         **payload.model_dump(),
     )
+
     db.add(metrics)
     await db.flush()
 
     logger.info(f"Metrics snapshot created for employee {employee_id}")
-    return {"id": str(metrics.id), "employee_id": employee_id, "snapshot_date": str(metrics.snapshot_date)}
+
+    return {
+        "id": str(metrics.id),
+        "employee_id": employee_id,
+        "snapshot_date": str(metrics.snapshot_date),
+    }
 
 
 @router.get(
@@ -209,26 +245,29 @@ async def create_metrics(
 async def get_latest_metrics(
     employee_id: str,
     db: AsyncSession = Depends(get_db),
-) -> dict:
-    """Return the most recent metrics snapshot for an employee."""
+):
+
     try:
         emp_uuid = uuid.UUID(employee_id)
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid employee ID format.")
 
-    from sqlalchemy import desc
     stmt = (
         select(EmployeeMetrics)
         .where(EmployeeMetrics.employee_id == emp_uuid)
         .order_by(desc(EmployeeMetrics.snapshot_date))
         .limit(1)
     )
+
     result = await db.execute(stmt)
     metrics = result.scalar_one_or_none()
-    if not metrics:
-        raise HTTPException(status_code=404, detail="No metrics found for this employee.")
 
-    # Return as dict (full metrics payload)
+    if not metrics:
+        raise HTTPException(
+            status_code=404,
+            detail="No metrics found for this employee.",
+        )
+
     return {
         "id": str(metrics.id),
         "employee_id": employee_id,

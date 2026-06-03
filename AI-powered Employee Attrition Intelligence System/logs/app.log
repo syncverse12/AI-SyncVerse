@@ -34,3 +34,5 @@
 2026-05-29 19:31:22.347 | INFO     | app.services.attrition_service:predict_attrition:51 | Starting attrition prediction for employee: e3f800e0-6153-419a-92bf-87cf63f07dcc
 2026-05-29 19:31:22.348 | INFO     | app.api.v1.endpoints.batch:batch_predict_attrition:89 | Batch attrition prediction complete | total=2 | succeeded=0 | failed=2
 2026-05-29 19:31:22.451 | INFO     | app.main:lifespan:46 | SyncVerse Attrition Intelligence shutdown complete.
+2026-06-03 19:42:47.981 | INFO     | app.core.logging:setup_logging:46 | Logging initialized | env=development | level=INFO
+2026-06-03 19:42:47.982 | INFO     | app.main:lifespan:29 | Starting SyncVerse Attrition Intelligence v1.0.0 [development]

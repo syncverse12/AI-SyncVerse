@@ -52,35 +52,48 @@ services:
       context: .
       dockerfile: Dockerfile
       target: runtime
+
     container_name: syncverse_api
     restart: unless-stopped
+
     environment:
-      APP_ENV: production
-      DEBUG: "false"
+      APP_ENV: development
+      DEBUG: "true"
+
       DATABASE_URL: postgresql+asyncpg://syncverse:syncverse_pass@postgres:5432/syncverse_attrition
       REDIS_URL: redis://redis:6379/0
+
       MODEL_PATH: /app/ml_models
       LOG_LEVEL: INFO
-      SECRET_KEY: ${SECRET_KEY:-change-me-in-production-32-chars-min}
-      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:3000}
+
+      SECRET_KEY: change-me-in-production-32-chars-min
+
+      ALLOWED_ORIGINS: http://localhost:3000
+
       ENABLE_BACKGROUND_JOBS: "true"
       PREDICTION_RECALC_INTERVAL_HOURS: "24"
+
     volumes:
       - ml_models:/app/ml_models
       - app_logs:/app/logs
+
     ports:
       - "8000:8000"
+
     depends_on:
       postgres:
         condition: service_healthy
+
       redis:
         condition: service_healthy
+
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 20s
+
     networks:
       - syncverse_net
 
