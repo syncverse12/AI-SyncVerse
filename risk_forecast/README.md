@@ -1,3 +1,12 @@
+---
+title: Risk Forecast
+colorFrom: blue
+colorTo: purple
+sdk: docker
+pinned: false
+app_port: 8000
+---
+
 # SyncVerse AI Risk Intelligence Engine
 
 > **"An AI operational nervous system for your company."**
