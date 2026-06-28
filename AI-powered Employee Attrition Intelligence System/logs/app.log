@@ -32,3 +32,9 @@
 2026-06-29 02:08:54.454 | INFO     | app.ml.predict:load_models:76 | ML models loaded successfully.
 2026-06-29 02:08:54.454 | INFO     | app.main:lifespan:50 | ML models loaded
 2026-06-29 02:08:54.462 | INFO     | app.main:lifespan:65 | Shutdown complete
+2026-06-29 02:15:10.853 | INFO     | app.core.logging:setup_logging:46 | Logging initialized | env=hf | level=INFO
+2026-06-29 02:15:10.854 | INFO     | app.main:lifespan:39 | Starting SyncVerse API
+2026-06-29 02:15:10.854 | WARNING  | app.main:lifespan:46 | HF mode detected → skipping DB init
+2026-06-29 02:15:10.941 | INFO     | app.ml.predict:load_models:76 | ML models loaded successfully.
+2026-06-29 02:15:10.942 | INFO     | app.main:lifespan:50 | ML models loaded
+2026-06-29 02:15:10.945 | INFO     | app.main:lifespan:65 | Shutdown complete
