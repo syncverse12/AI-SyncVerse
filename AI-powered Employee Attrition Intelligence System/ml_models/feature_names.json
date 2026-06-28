@@ -1,0 +1,43 @@
+{
+  "numeric": [
+    "age",
+    "monthly_income",
+    "years_at_company",
+    "years_since_last_promotion",
+    "years_with_curr_manager",
+    "years_in_current_role",
+    "performance_rating",
+    "job_satisfaction",
+    "work_life_balance",
+    "environment_satisfaction",
+    "relationship_satisfaction",
+    "overtime_hours",
+    "attendance_rate",
+    "workload_score",
+    "team_health_score",
+    "collaboration_score",
+    "tasks_completed",
+    "missed_deadlines",
+    "overdue_task_ratio",
+    "leadership_score",
+    "promotion_velocity",
+    "training_hours",
+    "overtime_ratio",
+    "deadline_failure_rate",
+    "promotion_gap_years",
+    "workload_pressure_score",
+    "stability_score",
+    "burnout_signal",
+    "satisfaction_composite",
+    "performance_trend",
+    "career_stagnation_score",
+    "income_adequacy_ratio",
+    "task_efficiency_score",
+    "engagement_score"
+  ],
+  "categorical": [
+    "department",
+    "job_role",
+    "job_level"
+  ]
+}
