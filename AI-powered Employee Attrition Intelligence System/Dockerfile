@@ -35,9 +35,10 @@ ENV APP_ENV=hf
 
 COPY app/ ./app/
 COPY scripts/ ./scripts/
+COPY ml_models/ ./ml_models/
 
 # Optional directories
-RUN mkdir -p /app/logs /app/ml_models /app/data
+RUN mkdir -p /app/logs /app/data
 
 # Non-root user
 RUN useradd -m syncverse && chown -R syncverse /app
