@@ -2,21 +2,29 @@ FROM python:3.11-slim AS builder
 
 WORKDIR /app
 
+# Install build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc g++ libpq-dev \
+    gcc \
+    g++ \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
+
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir --prefix=/install -r requirements.txt
 
+
+# ──────────────────────────────────────────────
+# Runtime Image
+# ──────────────────────────────────────────────
 
 FROM python:3.11-slim
 
 WORKDIR /app
 
+# Runtime dependencies only
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libpq-dev curl \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /install /usr/local
@@ -28,8 +36,10 @@ ENV APP_ENV=hf
 COPY app/ ./app/
 COPY scripts/ ./scripts/
 
+# Optional directories
 RUN mkdir -p /app/logs /app/ml_models /app/data
 
+# Non-root user
 RUN useradd -m syncverse && chown -R syncverse /app
 USER syncverse
 
