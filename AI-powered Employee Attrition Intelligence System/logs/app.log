@@ -1,38 +1,28 @@
-2026-05-29 19:30:12.036 | INFO     | app.core.logging:setup_logging:46 | Logging initialized | env=development | level=INFO
-2026-05-29 19:30:12.037 | INFO     | app.main:lifespan:29 | Starting SyncVerse Attrition Intelligence v1.0.0 [development]
-2026-05-29 19:30:53.615 | INFO     | app.core.logging:setup_logging:46 | Logging initialized | env=development | level=INFO
-2026-05-29 19:30:53.616 | INFO     | app.main:lifespan:29 | Starting SyncVerse Attrition Intelligence v1.0.0 [development]
-2026-05-29 19:31:14.152 | INFO     | app.core.logging:setup_logging:46 | Logging initialized | env=development | level=INFO
-2026-05-29 19:31:14.152 | INFO     | app.main:lifespan:29 | Starting SyncVerse Attrition Intelligence v1.0.0 [development]
-2026-05-29 19:31:14.152 | INFO     | app.main:lifespan:33 | Database initialized.
-2026-05-29 19:31:14.153 | WARNING  | app.ml.predict:load_models:58 | Attrition model not found at ./ml_models/attrition_model.joblib. Run training pipeline first: python -m app.ml.train
-2026-05-29 19:31:14.161 | WARNING  | app.api.v1.endpoints.health:health_check:36 | DB health check failed: [Errno 111] Connect call failed ('127.0.0.1', 5432)
-2026-05-29 19:31:14.245 | WARNING  | app.api.v1.endpoints.health:health_check:36 | DB health check failed: [Errno 111] Connect call failed ('127.0.0.1', 5432)
-2026-05-29 19:31:14.252 | WARNING  | app.api.v1.endpoints.health:health_check:36 | DB health check failed: [Errno 111] Connect call failed ('127.0.0.1', 5432)
-2026-05-29 19:31:14.292 | INFO     | app.api.v1.endpoints.employees:create_employee:60 | Created employee: EMP-TEST-001
-2026-05-29 19:31:14.320 | INFO     | app.api.v1.endpoints.employees:create_employee:60 | Created employee: EMP-METRICS-001
-2026-05-29 19:31:14.326 | INFO     | app.api.v1.endpoints.employees:create_metrics:200 | Metrics snapshot created for employee 4c9cfd14-946d-46c6-97f7-743cb0366889
-2026-05-29 19:31:14.335 | INFO     | app.services.attrition_service:predict_attrition:51 | Starting attrition prediction for employee: 878d1b46-adb2-4f35-aab7-cec5c03ed72a
-2026-05-29 19:31:14.340 | INFO     | app.services.attrition_service:predict_attrition:51 | Starting attrition prediction for employee: invalid-id
-2026-05-29 19:31:14.345 | INFO     | app.services.attrition_service:predict_attrition:51 | Starting attrition prediction for employee: cd0c8dca-c673-48af-a636-07347a1bfb37
-2026-05-29 19:31:14.347 | INFO     | app.services.attrition_service:predict_attrition:51 | Starting attrition prediction for employee: dc498846-1eca-4a0b-84a3-4e2a4ee5dbfa
-2026-05-29 19:31:14.348 | INFO     | app.api.v1.endpoints.batch:batch_predict_attrition:89 | Batch attrition prediction complete | total=2 | succeeded=0 | failed=2
-2026-05-29 19:31:14.452 | INFO     | app.main:lifespan:46 | SyncVerse Attrition Intelligence shutdown complete.
-2026-05-29 19:31:22.174 | INFO     | app.core.logging:setup_logging:46 | Logging initialized | env=development | level=INFO
-2026-05-29 19:31:22.175 | INFO     | app.main:lifespan:29 | Starting SyncVerse Attrition Intelligence v1.0.0 [development]
-2026-05-29 19:31:22.175 | INFO     | app.main:lifespan:33 | Database initialized.
-2026-05-29 19:31:22.175 | WARNING  | app.ml.predict:load_models:58 | Attrition model not found at ./ml_models/attrition_model.joblib. Run training pipeline first: python -m app.ml.train
-2026-05-29 19:31:22.183 | WARNING  | app.api.v1.endpoints.health:health_check:36 | DB health check failed: [Errno 111] Connect call failed ('127.0.0.1', 5432)
-2026-05-29 19:31:22.243 | WARNING  | app.api.v1.endpoints.health:health_check:36 | DB health check failed: [Errno 111] Connect call failed ('127.0.0.1', 5432)
-2026-05-29 19:31:22.251 | WARNING  | app.api.v1.endpoints.health:health_check:36 | DB health check failed: [Errno 111] Connect call failed ('127.0.0.1', 5432)
-2026-05-29 19:31:22.291 | INFO     | app.api.v1.endpoints.employees:create_employee:60 | Created employee: EMP-TEST-001
-2026-05-29 19:31:22.321 | INFO     | app.api.v1.endpoints.employees:create_employee:60 | Created employee: EMP-METRICS-001
-2026-05-29 19:31:22.327 | INFO     | app.api.v1.endpoints.employees:create_metrics:200 | Metrics snapshot created for employee d311b80b-08b9-4904-8da1-48d15dba5d0b
-2026-05-29 19:31:22.335 | INFO     | app.services.attrition_service:predict_attrition:51 | Starting attrition prediction for employee: f35f449e-37a0-4abf-901d-d8eabb6e2b0e
-2026-05-29 19:31:22.340 | INFO     | app.services.attrition_service:predict_attrition:51 | Starting attrition prediction for employee: invalid-id
-2026-05-29 19:31:22.346 | INFO     | app.services.attrition_service:predict_attrition:51 | Starting attrition prediction for employee: 8286aed1-a4c7-4c91-a10d-005f3de3e93f
-2026-05-29 19:31:22.347 | INFO     | app.services.attrition_service:predict_attrition:51 | Starting attrition prediction for employee: e3f800e0-6153-419a-92bf-87cf63f07dcc
-2026-05-29 19:31:22.348 | INFO     | app.api.v1.endpoints.batch:batch_predict_attrition:89 | Batch attrition prediction complete | total=2 | succeeded=0 | failed=2
-2026-05-29 19:31:22.451 | INFO     | app.main:lifespan:46 | SyncVerse Attrition Intelligence shutdown complete.
-2026-06-03 19:42:47.981 | INFO     | app.core.logging:setup_logging:46 | Logging initialized | env=development | level=INFO
-2026-06-03 19:42:47.982 | INFO     | app.main:lifespan:29 | Starting SyncVerse Attrition Intelligence v1.0.0 [development]
+2026-06-28 23:30:42.242 | INFO     | app.core.logging:setup_logging:46 | Logging initialized | env=hf | level=INFO
+2026-06-28 23:30:42.243 | INFO     | app.main:lifespan:39 | Starting SyncVerse API
+2026-06-28 23:30:42.244 | WARNING  | app.main:lifespan:46 | HF mode detected → skipping DB init
+2026-06-28 23:30:42.249 | WARNING  | app.ml.predict:load_models:58 | Attrition model not found at ./ml_models/attrition_model.joblib. Run training pipeline first: python -m app.ml.train
+2026-06-28 23:30:42.250 | INFO     | app.main:lifespan:50 | ML models loaded
+2026-06-28 23:31:43.157 | INFO     | app.core.logging:setup_logging:46 | Logging initialized | env=hf | level=INFO
+2026-06-28 23:31:43.157 | INFO     | app.main:lifespan:39 | Starting SyncVerse API
+2026-06-28 23:31:43.157 | WARNING  | app.main:lifespan:46 | HF mode detected → skipping DB init
+2026-06-28 23:31:43.163 | WARNING  | app.ml.predict:load_models:58 | Attrition model not found at ./ml_models/attrition_model.joblib. Run training pipeline first: python -m app.ml.train
+2026-06-28 23:31:43.163 | INFO     | app.main:lifespan:50 | ML models loaded
+2026-06-28 23:31:43.167 | INFO     | app.main:lifespan:65 | Shutdown complete
+2026-06-29 01:19:55.051 | INFO     | app.core.logging:setup_logging:46 | Logging initialized | env=hf | level=INFO
+2026-06-29 01:19:55.053 | INFO     | app.main:lifespan:39 | Starting SyncVerse API
+2026-06-29 01:19:55.055 | WARNING  | app.main:lifespan:46 | HF mode detected → skipping DB init
+2026-06-29 01:19:55.266 | INFO     | app.ml.predict:load_models:76 | ML models loaded successfully.
+2026-06-29 01:19:55.268 | INFO     | app.main:lifespan:50 | ML models loaded
+2026-06-29 01:19:55.279 | INFO     | app.main:lifespan:65 | Shutdown complete
+2026-06-29 01:26:33.192 | INFO     | app.core.logging:setup_logging:46 | Logging initialized | env=hf | level=INFO
+2026-06-29 01:26:33.193 | INFO     | app.main:lifespan:39 | Starting SyncVerse API
+2026-06-29 01:26:33.194 | WARNING  | app.main:lifespan:46 | HF mode detected → skipping DB init
+2026-06-29 01:26:33.329 | INFO     | app.ml.predict:load_models:76 | ML models loaded successfully.
+2026-06-29 01:26:33.330 | INFO     | app.main:lifespan:50 | ML models loaded
+2026-06-29 01:26:33.335 | INFO     | app.main:lifespan:65 | Shutdown complete
+2026-06-29 01:50:42.313 | INFO     | app.core.logging:setup_logging:46 | Logging initialized | env=hf | level=INFO
+2026-06-29 01:50:42.314 | INFO     | app.main:lifespan:39 | Starting SyncVerse API
+2026-06-29 01:50:42.315 | WARNING  | app.main:lifespan:46 | HF mode detected → skipping DB init
+2026-06-29 01:50:42.523 | INFO     | app.ml.predict:load_models:76 | ML models loaded successfully.
+2026-06-29 01:50:42.525 | INFO     | app.main:lifespan:50 | ML models loaded
