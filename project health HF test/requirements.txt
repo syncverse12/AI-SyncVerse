@@ -1,0 +1,22 @@
+fastapi==0.111.0
+uvicorn[standard]==0.30.1
+pydantic==2.7.1
+pydantic-settings==2.3.0
+
+# Embeddings + LLM
+google-genai==1.21.1
+
+
+# Async / HTTP
+httpx==0.28.1
+aiofiles==23.2.1
+
+# Utilities
+python-dotenv==1.0.1
+numpy==1.26.4
+tenacity==8.3.0
+structlog==24.2.0
+
+# Testing
+pytest==8.2.2
+pytest-asyncio==0.23.7
