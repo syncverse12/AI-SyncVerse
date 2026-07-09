@@ -1,9 +1,0 @@
-torch
-numpy
-pandas
-faiss-cpu
-sentence-transformers
-langchain-text-splitters
-groq
-python-dotenv
-tqdm

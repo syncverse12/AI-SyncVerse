@@ -1,5 +1,0 @@
-.env
-data/processed/
-*.pkl
-*.index
-__pycache__/
