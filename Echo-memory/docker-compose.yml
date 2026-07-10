@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-syncverse}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-syncverse}
+      POSTGRES_DB: ${POSTGRES_DB:-syncverse}
+    ports:
+      - "5432:5432"
+    volumes:
+      - syncverse_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-syncverse}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  echo:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "7860:7860"
+    environment:
+      APP_ENV: development
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-syncverse}:${POSTGRES_PASSWORD:-syncverse}@db:5432/${POSTGRES_DB:-syncverse}
+      CHROMA_PERSIST_DIR: /data/chroma
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
+      GEMINI_CHAT_MODEL: ${GEMINI_CHAT_MODEL:-gemini-2.5-flash}
+      GEMINI_EMBEDDING_MODEL: ${GEMINI_EMBEDDING_MODEL:-models/gemini-embedding-001}
+      CORS_ORIGINS: ${CORS_ORIGINS:-*}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    volumes:
+      - syncverse_chroma:/data/chroma
+
+volumes:
+  syncverse_pgdata:
+  syncverse_chroma:
