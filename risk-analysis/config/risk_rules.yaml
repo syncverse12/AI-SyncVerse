@@ -1,0 +1,19 @@
+timeline:
+  weight: 0.30
+
+resource:
+  weight: 0.25
+
+productivity:
+  weight: 0.20
+
+communication:
+  weight: 0.10
+
+budget:
+  weight: 0.15
+
+severity_thresholds:
+  critical: 80
+  high: 60
+  medium: 35

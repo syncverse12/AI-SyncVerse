@@ -1,0 +1,22 @@
+# Weights used by the Risk Engine to compute the Overall Risk Score.
+# Must sum to 1.0 across the categories actually used in the aggregation.
+# Editable without touching any code - loaded at startup by app/core/config.py
+
+weights:
+  timeline: 0.25
+  resource: 0.20
+  productivity: 0.15
+  dependency: 0.10
+  budget: 0.15
+  communication: 0.05
+  confirmed_manual: 0.10
+
+thresholds:
+  severity_critical: 80
+  severity_high: 60
+  severity_medium: 35
+
+analysis:
+  velocity_window_days: 7
+  meeting_lookback_days: 14
+  scope_growth_lookback_days: 14
