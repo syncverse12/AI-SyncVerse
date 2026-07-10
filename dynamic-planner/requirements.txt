@@ -1,0 +1,7 @@
+# AI Dynamic Project Planner — runtime dependencies
+# The AI engine runs entirely on the Python standard library.
+# Only the HTTP layer needs external packages.
+
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+pydantic==2.10.3
