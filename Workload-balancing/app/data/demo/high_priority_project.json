@@ -1,0 +1,97 @@
+{
+  "scope_type": "project",
+  "scope_id": "p5",
+  "scope_name": "High Priority Project",
+  "employees": [
+    {
+      "id": "u1",
+      "first_name": "Ahmed",
+      "last_name": "Nasser",
+      "seniority_level": 3,
+      "department": 1,
+      "skills_raw": "[\"backend\"]",
+      "availability_status": "Busy",
+      "role": "engineer"
+    },
+    {
+      "id": "u2",
+      "first_name": "Sara",
+      "last_name": "Ali",
+      "seniority_level": 3,
+      "department": 1,
+      "skills_raw": "[\"backend\", \"python\"]",
+      "availability_status": "Busy",
+      "role": "engineer"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t1",
+      "title": "Launch-blocking payment bug",
+      "description": "",
+      "status": "in_progress",
+      "priority": 10,
+      "assigned_to_user_id": "u1",
+      "project_id": "p5",
+      "category_id": "c1",
+      "category_name": "Backend",
+      "workspace_id": "ws-1",
+      "depends_on_task_ids": [],
+      "comment_count": 5,
+      "due_date": "2026-07-12T12:00:00",
+      "task_started_at": "2026-07-10T12:00:00",
+      "created_at": "2026-07-08T12:00:00"
+    },
+    {
+      "id": "t2",
+      "title": "Fraud detection rule update",
+      "description": "",
+      "status": "in_progress",
+      "priority": 9,
+      "assigned_to_user_id": "u2",
+      "project_id": "p5",
+      "category_id": "c1",
+      "category_name": "Backend",
+      "workspace_id": "ws-1",
+      "depends_on_task_ids": [],
+      "comment_count": 3,
+      "due_date": "2026-07-12T12:00:00",
+      "task_started_at": "2026-07-10T12:00:00",
+      "created_at": "2026-07-08T12:00:00"
+    },
+    {
+      "id": "t3",
+      "title": "Rollback plan documentation",
+      "description": "",
+      "status": "todo",
+      "priority": 8,
+      "assigned_to_user_id": "u1",
+      "project_id": "p5",
+      "category_id": "c1",
+      "category_name": "Backend",
+      "workspace_id": "ws-1",
+      "depends_on_task_ids": [],
+      "comment_count": 0,
+      "due_date": "2026-07-13T12:00:00",
+      "created_at": "2026-07-04T12:00:00"
+    }
+  ],
+  "time_logs": [
+    {
+      "id": "l1",
+      "task_id": "t1",
+      "user_id": "u1",
+      "start_time": "2026-07-10T06:00:00",
+      "end_time": "2026-07-10T12:00:00",
+      "duration_minutes": 360
+    },
+    {
+      "id": "l2",
+      "task_id": "t2",
+      "user_id": "u2",
+      "start_time": "2026-07-10T07:00:00",
+      "end_time": "2026-07-10T12:00:00",
+      "duration_minutes": 300
+    }
+  ]
+}

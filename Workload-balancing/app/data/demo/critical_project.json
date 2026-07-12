@@ -1,0 +1,173 @@
+{
+  "scope_type": "project",
+  "scope_id": "p6",
+  "scope_name": "Critical Project",
+  "employees": [
+    {
+      "id": "u1",
+      "first_name": "Ahmed",
+      "last_name": "Nasser",
+      "seniority_level": 3,
+      "department": 1,
+      "skills_raw": "[\"backend\"]",
+      "availability_status": "Busy",
+      "role": "engineer"
+    },
+    {
+      "id": "u2",
+      "first_name": "Sara",
+      "last_name": "Ali",
+      "seniority_level": 3,
+      "department": 1,
+      "skills_raw": "[\"frontend\"]",
+      "availability_status": "Busy",
+      "role": "engineer"
+    },
+    {
+      "id": "u3",
+      "first_name": "Omar",
+      "last_name": "Khaled",
+      "seniority_level": 2,
+      "department": 3,
+      "skills_raw": "[\"devops\"]",
+      "availability_status": "Busy",
+      "role": "engineer"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t1",
+      "title": "Critical security patch",
+      "description": "",
+      "status": "in_review",
+      "priority": 10,
+      "assigned_to_user_id": "u1",
+      "project_id": "p6",
+      "category_id": "c1",
+      "category_name": "Backend",
+      "workspace_id": "ws-1",
+      "depends_on_task_ids": [],
+      "comment_count": 9,
+      "due_date": "2026-07-08T12:00:00",
+      "task_started_at": "2026-07-01T12:00:00",
+      "created_at": "2026-06-29T12:00:00"
+    },
+    {
+      "id": "t2",
+      "title": "Data corruption hotfix",
+      "description": "",
+      "status": "in_progress",
+      "priority": 10,
+      "assigned_to_user_id": "u1",
+      "project_id": "p6",
+      "category_id": "c1",
+      "category_name": "Backend",
+      "workspace_id": "ws-1",
+      "depends_on_task_ids": [],
+      "comment_count": 7,
+      "due_date": "2026-07-10T12:00:00",
+      "task_started_at": "2026-07-05T12:00:00",
+      "created_at": "2026-07-03T12:00:00"
+    },
+    {
+      "id": "t3",
+      "title": "Perf regression on checkout",
+      "description": "",
+      "status": "in_progress",
+      "priority": 9,
+      "assigned_to_user_id": "u2",
+      "project_id": "p6",
+      "category_id": "c2",
+      "category_name": "Frontend",
+      "workspace_id": "ws-1",
+      "depends_on_task_ids": [],
+      "comment_count": 6,
+      "due_date": "2026-07-09T12:00:00",
+      "task_started_at": "2026-07-04T12:00:00",
+      "created_at": "2026-07-02T12:00:00"
+    },
+    {
+      "id": "t4",
+      "title": "Prod incident postmortem",
+      "description": "",
+      "status": "todo",
+      "priority": 7,
+      "assigned_to_user_id": "u2",
+      "project_id": "p6",
+      "category_id": "c2",
+      "category_name": "Frontend",
+      "workspace_id": "ws-1",
+      "depends_on_task_ids": [],
+      "comment_count": 0,
+      "due_date": "2026-07-10T12:00:00",
+      "created_at": "2026-07-04T12:00:00"
+    },
+    {
+      "id": "t5",
+      "title": "Restore backups",
+      "description": "",
+      "status": "in_progress",
+      "priority": 10,
+      "assigned_to_user_id": "u3",
+      "project_id": "p6",
+      "category_id": "c3",
+      "category_name": "DevOps",
+      "workspace_id": "ws-1",
+      "depends_on_task_ids": [],
+      "comment_count": 8,
+      "due_date": "2026-07-07T12:00:00",
+      "task_started_at": "2026-07-02T12:00:00",
+      "created_at": "2026-06-30T12:00:00"
+    },
+    {
+      "id": "t6",
+      "title": "Update API docs",
+      "description": "",
+      "status": "todo",
+      "priority": 2,
+      "assigned_to_user_id": "u1",
+      "project_id": "p6",
+      "category_id": "c1",
+      "category_name": "Backend",
+      "workspace_id": "ws-1",
+      "depends_on_task_ids": [],
+      "comment_count": 0,
+      "due_date": "2026-07-16T12:00:00",
+      "created_at": "2026-07-04T12:00:00"
+    }
+  ],
+  "time_logs": [
+    {
+      "id": "l1",
+      "task_id": "t1",
+      "user_id": "u1",
+      "start_time": "2026-07-10T05:00:00",
+      "end_time": "2026-07-10T12:00:00",
+      "duration_minutes": 420
+    },
+    {
+      "id": "l2",
+      "task_id": "t2",
+      "user_id": "u1",
+      "start_time": "2026-07-10T06:00:00",
+      "end_time": "2026-07-10T12:00:00",
+      "duration_minutes": 360
+    },
+    {
+      "id": "l3",
+      "task_id": "t3",
+      "user_id": "u2",
+      "start_time": "2026-07-10T05:20:00",
+      "end_time": "2026-07-10T12:00:00",
+      "duration_minutes": 400
+    },
+    {
+      "id": "l4",
+      "task_id": "t5",
+      "user_id": "u3",
+      "start_time": "2026-07-10T04:30:00",
+      "end_time": "2026-07-10T12:00:00",
+      "duration_minutes": 450
+    }
+  ]
+}
